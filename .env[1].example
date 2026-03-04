@@ -1,0 +1,15 @@
+# .env.example
+# Copy this to .env for local development.
+# On Railway, set these as environment variables in the dashboard.
+
+# ── Supabase ───────────────────────────────────────────────────────────────
+# Get these at: https://supabase.com/dashboard → your project → Settings → API
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_KEY=eyJ...   # "service_role" key (NOT the anon key — this has write access)
+
+# ── Optional ───────────────────────────────────────────────────────────────
+# A secret token to protect the manual /scrape endpoint
+SCRAPE_SECRET=change-me-to-something-random
+
+# Port (Railway sets this automatically)
+PORT=3000
