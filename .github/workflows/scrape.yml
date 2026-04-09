@@ -1,0 +1,46 @@
+# .github/workflows/scrape.yml
+# Runs the livestock scraper on a schedule and on manual trigger.
+#
+# Schedule:
+#   - Wednesday 8pm CT  → catches Tuesday sale results
+#   - Saturday  6am CT  → catches Friday sale results
+#
+# Manual trigger:
+#   - Go to Actions tab in GitHub → "Scrape Livestock Markets" → Run workflow
+#   - OR via the dashboard "Scrape Now" button (calls GitHub API)
+#
+# Required secrets (set in repo Settings → Secrets → Actions):
+#   SUPABASE_URL          e.g. https://xxxx.supabase.co
+#   SUPABASE_SERVICE_KEY  service_role key (not the anon key)
+
+name: Scrape Livestock Markets
+
+on:
+  schedule:
+    - cron: "0 1 * * 4"    # Thu 01:00 UTC = Wed 8pm CT
+    - cron: "0 11 * * 6"   # Sat 11:00 UTC = Sat 6am CT
+  workflow_dispatch:        # Manual trigger from GitHub UI or API
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scraper
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node src/scraper.js
