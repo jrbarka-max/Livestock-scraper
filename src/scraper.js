@@ -162,9 +162,17 @@ function parsePipestonePage(html, defaultSaleType, barnId) {
   const lots = [];
 
   // Find sale date from headings like "February 26th 2026"
+  // Skip dates in the future (Pipestone lists the next upcoming sale at the top)
   let saleDate = null;
+  const today = new Date(); today.setHours(0,0,0,0);
   $("h1,h2,h3,h4,strong,b").each((_, el) => {
-    if (!saleDate) { const d = extractDate($(el).text()); if (d) saleDate = d; }
+    if (saleDate) return;
+    const d = extractDate($(el).text());
+    if (d) {
+      const parts = d.split("/");
+      const dt = new Date(2000 + parseInt(parts[2]), parseInt(parts[0])-1, parseInt(parts[1]));
+      if (dt <= today) saleDate = d;
+    }
   });
 
   // All results are jammed into a few long strings with no newlines.
