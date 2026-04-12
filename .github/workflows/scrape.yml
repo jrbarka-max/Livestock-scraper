@@ -36,8 +36,8 @@ jobs:
           node-version: 20
       
 
-      - name: Install dependencies
-        run: npm Install
+      - name: install dependencies
+        run: npm install
 
       - name: Run scraper
         env:
